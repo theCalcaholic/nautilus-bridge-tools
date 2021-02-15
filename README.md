@@ -5,7 +5,7 @@ Usage:
 
 Source the library, then define keyword and required arguments and call the `parse_args` function.
 
-```sh
+```bash
 # Define a description which will be used in the --help message
 DESCRIPTION="A dummy function to showcase the bash-args library"
 # Define a usage message which will be used in the --help message and during argument parsing errors
@@ -37,7 +37,8 @@ echo "Your arguments:"
 echo "username: ${NAMED_ARGS['username']}"
 echo "config: ${KW_ARGS['--config']}"
 echo "interactive: ${KW_ARGS['--interactive']-${KW_ARGS['-i']}"
-# Set a default value
+
+# Set a default value for the sleep argument
 sleep="${KW_ARGS['--sleep']-${KW_ARGS['-s']}}"
 sleep="${sleep-0}"
 echo "sleep: $sleep"
