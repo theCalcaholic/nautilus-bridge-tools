@@ -51,65 +51,65 @@ Let's say, you saved the example above as `example.sh`. Now, you'd get the follo
 
 1. If you to call your script with `--help`, you get your usage instructions:
 
-```sh
-$ ./example.sh --help
-A dummy function to showcase the bash-args library
+  ```sh
+  $ ./example.sh --help
+  A dummy function to showcase the bash-args library
 
-USAGE:
-  my_example_func [OPTIONS] username
+  USAGE:
+    my_example_func [OPTIONS] username
 
-  username
-    Your username
-  
-  Options
-    --config file        Read configuration from a file
-    -i, --interactive    Ask before doing anything dangerous
-    -s, --sleep duration Sleep <duration> seconds before doing anything
-```
+    username
+      Your username
+
+    Options
+      --config file        Read configuration from a file
+      -i, --interactive    Ask before doing anything dangerous
+      -s, --sleep duration Sleep <duration> seconds before doing anything
+  ```
 
 2. If you call it without the required positional argument `username`, you get an error:
 
-```sh
-$ ./example.sh 
-ERROR: The following required arguments are missing: username
-USAGE:
-  my_example_func [OPTIONS] username
+  ```sh
+  $ ./example.sh 
+  ERROR: The following required arguments are missing: username
+  USAGE:
+    my_example_func [OPTIONS] username
 
-  username
-    Your username
-  
-  Options
-    --config file        Read configuration from a file
-    -i, --interactive    Ask before doing anything dangerous
-    -s, --sleep duration Sleep <duration> seconds before doing anything
-```
+    username
+      Your username
+
+    Options
+      --config file        Read configuration from a file
+      -i, --interactive    Ask before doing anything dangerous
+      -s, --sleep duration Sleep <duration> seconds before doing anything
+  ```
 
 3. If you call it with an invalid (non-int) argument for `-s` or `--sleep`, you get an error:
 
-```sh
-$ ./example.sh thecalcaholic -s notanumber
-ERROR: Expected a number but got 'notanumber'!
+  ```sh
+  $ ./example.sh thecalcaholic -s notanumber
+  ERROR: Expected a number but got 'notanumber'!
 
-USAGE:
-  my_example_func [OPTIONS] username
+  USAGE:
+    my_example_func [OPTIONS] username
 
-  username
-    Your username
-  
-  Options
-    --config file        Read configuration from a file
-    -i, --interactive    Ask before doing anything dangerous
-    -s, --sleep duration Sleep <duration> seconds before doing anything
-```
+    username
+      Your username
+
+    Options
+      --config file        Read configuration from a file
+      -i, --interactive    Ask before doing anything dangerous
+      -s, --sleep duration Sleep <duration> seconds before doing anything
+  ```
 
 4. If you call it with proper arguments, it does what it's supposed to:
 
-```sh
-$ ./example.sh thecalcaholic -s 5 extra --config /home/thecalcaholic/example_config.json -i
-Your arguments:
-username: thecalcaholic
-config: /home/thecalcaholic/example_config.json
-interactive: true
-sleep: 5
-any other args you provided: extra
-```
+  ```sh
+  $ ./example.sh thecalcaholic -s 5 extra --config /home/thecalcaholic/example_config.json -i
+  Your arguments:
+  username: thecalcaholic
+  config: /home/thecalcaholic/example_config.json
+  interactive: true
+  sleep: 5
+  any other args you provided: extra
+  ```
