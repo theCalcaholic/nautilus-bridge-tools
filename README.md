@@ -34,7 +34,7 @@ REQUIRED=("username")
 # Parse all arguments in "$@"
 parse_args __USAGE "$USAGE" __DESCRIPTION "$DESCRIPTION" "$@"
 
-# Show the usage message on specific exit codes
+# Show the usage message on specific exit codes in your script
 set_trap 1 2
 
 # Retrieve the arguments
