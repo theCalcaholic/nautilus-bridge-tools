@@ -1,5 +1,11 @@
 # bash args
-An argument parsing library for bash scripts
+
+*Producing quality scripts with ease.*
+
+## Description
+
+bash-args is a small library which does the heavy-lifting for all (if not: [create a feature request :P][gh-issues]) your argument parsing needs for your bash scripts.
+Written originally for my own [bash-utils][bash-utils-repo].
 
 ## Usage
 
@@ -113,3 +119,6 @@ Let's say, you saved the example above as `example.sh`. Now, you'd get the follo
   sleep: 5
   any other args you provided: extra
   ```
+
+[gh-issues]: https://github.com/theCalcaholic/bash-args/issues
+[bash-utils-repo]: https://github.com/theCalcaholic/bash-utils
