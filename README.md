@@ -120,5 +120,9 @@ Let's say, you saved the example above as `example.sh` (don't forget adding a sh
   any other args you provided: extra
   ```
 
+## Roadmap
+
+* Automatically generated usage messages
+
 [gh-issues]: https://github.com/theCalcaholic/bash-args/issues
 [bash-utils-repo]: https://github.com/theCalcaholic/bash-utils
