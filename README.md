@@ -7,7 +7,7 @@
 bash-args is a small library which does the heavy-lifting for all (if not: [create a feature request :P][gh-issues]) your argument parsing needs for your bash scripts.
 Written originally for my own [bash-utils][bash-utils-repo].
 
-## Usage
+## How do I use it?
 
 Source the library, then define keyword and required arguments and call the `parse_args` function.
 
@@ -53,7 +53,7 @@ echo "any other args you provided: ${ARGS[@]}"
 
 ### What does this get me?
 
-Let's say, you saved the example above as `example.sh`. Now, you'd get the following behavior:
+Let's say, you saved the example above as `example.sh` (don't forget adding a shebang and making it executable). Now, you'd get the following behavior:
 
 1. If you to call your script with `--help`, you get your usage instructions:
 
