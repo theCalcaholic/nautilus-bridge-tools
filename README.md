@@ -1,4 +1,4 @@
-# bash-args
+# bash args
 An argument parsing library for bash scripts
 
 Usage:
@@ -37,6 +37,9 @@ echo "Your arguments:"
 echo "username: ${NAMED_ARGS['username']}"
 echo "config: ${KW_ARGS['--config']}"
 echo "interactive: ${KW_ARGS['--interactive']-${KW_ARGS['-i']}"
-echo "sleep: ${KW_ARGS['--sleep']-${KW_ARGS['-s'}}"
+# Set a default value
+sleep="${KW_ARGS['--sleep']-${KW_ARGS['-s']}}"
+sleep="${sleep-0}"
+echo "sleep: $sleep"
 echo "any other args you provided: ${ARGS[@]}"
 ```
