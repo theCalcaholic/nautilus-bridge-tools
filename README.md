@@ -4,7 +4,7 @@
 
 ## Description
 
-bash-args is a small library which does the heavy-lifting for all (if not: [create a feature request :P][gh-issues]) your argument parsing needs for your bash scripts.
+bash-args is a small library which does the heavy-lifting for all your argument parsing needs (if not: [request a feature][gh-issues] :P) for your bash scripts.
 Written originally for my own [bash-utils][bash-utils-repo].
 
 ## How do I use it?
