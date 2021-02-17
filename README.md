@@ -10,6 +10,7 @@ Written originally for my own [bash-utils][bash-utils-repo].
 ## How do I use it?
 
 Source the library, then define keyword and required arguments and call the `parse_args` function.
+If you want to create a self-contained script with this library, you could use [bundle-script.sh][bundle-script] (which is what I do myself).
 
 ```bash
 # Define a description which will be used in the --help message
@@ -126,3 +127,4 @@ Let's say, you saved the example above as `example.sh` (don't forget adding a sh
 
 [gh-issues]: https://github.com/theCalcaholic/bash-args/issues
 [bash-utils-repo]: https://github.com/theCalcaholic/bash-utils
+[bundle-script]: https://github.com/theCalcaholic/bash-utils#bundle-scriptsh
