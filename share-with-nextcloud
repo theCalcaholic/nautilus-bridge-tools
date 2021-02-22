@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+. "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh"
+
+{
+
+if [[ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]]
+then
+  NAUTILUS_SCRIPT_SELECTED_FILE_PATHS="$1"
+fi
+
+echo ""
+echo "Running share-with-nextcloud on files:"
+echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+echo ""
+
 SETUP_SCRIPT="
 . '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
 SCRIPT_NAME='Share with Nextcloud'
@@ -80,12 +94,7 @@ share_file() {
   fi
 }
 
-{
 
-if [[ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]]
-then
-  NAUTILUS_SCRIPT_SELECTED_FILE_PATHS="$1"
-fi
 create_nautilus_shares_directory
 
 while read -r file
@@ -101,4 +110,4 @@ do
 
 done <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
 
-} 2>&1 | tee ~/.share-with-nextcloud.log
+} 2>&1 | tee -a "$(get_log_path share-with-nextcloud)"

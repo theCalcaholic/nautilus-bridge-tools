@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 
+. "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh"
+
 {
+
+if [[ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]]
+then
+  NAUTILUS_SCRIPT_SELECTED_FILE_PATHS="$1"
+fi
+
+echo ""
+echo "Running virustotal-scan on files:"
+echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+echo ""
 
 SETUP_SCRIPT="
 . '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
@@ -21,10 +33,6 @@ From there, copy your API key and paste it here (with Ctrl + Shift + V), then pr
 show_setup_dialog
 "
 
-if [[ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]]
-then
-  NAUTILUS_SCRIPT_SELECTED_FILE_PATHS="$1"
-fi
 
 VT_API_KEY="$(secret-tool lookup service nautilus-bridge-tools id virustotal-apikey account virustotal.com)"
 
@@ -76,5 +84,5 @@ do
 
 done <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
 
-} 2>&1 | tee -a "$HOME/.virustotal-scan.log"
+} 2>&1 | tee -a "$(get_log_path virustotal-scan)"
 

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+. "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh"
+
+{
+
+echo ""
+echo "Running open-parent-in-terminal in directory $(pwd)"
+echo ""
+  
+x-terminal-emulator --working-directory="$(pwd)"
+
+} 2>&1 | tee -a "$(get_log_path open-parent-in-terminal)"

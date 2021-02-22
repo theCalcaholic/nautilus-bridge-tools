@@ -94,7 +94,10 @@ wait_for_enter() {
     done
 }
 
-if [[ "$1" == "--setup" ]]
-then
-  show_setup_dialog
-fi
+get_log_path() {
+  local log_path="$(dirname "$BASH_SOURCE")/../logs/.${1:-other}.log"
+  mkdir -p "$(dirname "$log_path")" || true
+  touch "$log_path"
+  echo "$(realpath "$log_path")"
+}
+
