@@ -18,7 +18,7 @@ SETUP_SCRIPT="
 . '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
 SCRIPT_NAME='Share with Nextcloud'
 SCRIPT_FILE_NAME='share-with-nextcloud'
-APT_DEPENDENCIES=('libsecret-tools')
+APT_DEPENDENCIES=('curl' 'python3')
 CONFIG_ITEMS=(
   'nc_url' 'Please enter your nextcloud url (e.g. https://my-domain.com/nextcloud)'
   'user'   'Please enter your nextcloud user')
