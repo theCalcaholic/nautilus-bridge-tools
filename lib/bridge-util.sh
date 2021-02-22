@@ -45,6 +45,7 @@ show_setup_dialog() {
 
   if [[ -n "${CONFIG_ITEMS[@]}" ]]
   then
+    mkdir -p "$HOME/.config/nautilus-bridge-tools"
     CONFIG_PATH="$HOME/.config/nautilus-bridge-tools/.${SCRIPT_FILE_NAME?}.env"
     echo -n "" > "$CONFIG_PATH"
     while true;
