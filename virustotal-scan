@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+#set -e
 
 USAGE="virustotal-scan.sh [OPTIONS]
 
@@ -10,20 +10,28 @@ USAGE="virustotal-scan.sh [OPTIONS]
 
 DESCRIPTION="Uploads a file to be scanned on virustotal.com. Intended to be used as Nautilus Script"
 
-. "../lib/parse_args.sh"
-set_trap 1 2
-KEYWORDS=("--setup" "-s")
-parse_args _USAGE="$USAGE" _DESCRIPTION="$DESCRIPTION" "$@"
+. "$(dirname "$BASH_SOURCE")/lib/bash-args/parse_args.sh"
+#set_trap 1 2
+KEYWORDS=("--setup;bool" "-s;bool")
+parse_args __USAGE "$USAGE" __DESCRIPTION "$DESCRIPTION" "$@"
 
-if [[ " $KW_ARGS " =~ .*(" --setup "|" -s ").* ]]
+
+if [[ "${KW_ARGS['--setup']-${KW_ARGS['-s']}}" == "true" ]]
 then
     echo "==========================="
     echo "== VIRUSTOTAL SCAN SETUP =="
     echo "==========================="
     echo ""
+
+    if ! command -v secret-tool > /dev/null 2>&1
+    then
+      echo "This script requires 'secret-tool' to be installed, which requires sudo privileges. Please enter your password, when asked."
+      sudo apt install -y libsecret-tools
+    fi
+    echo ""
+    
     echo "In order to use virustotal-scan.sh you need to retrieve your own, personal API key for"\
          " virustotal.com"
-    echo "Follow these steps, then press [ENTER]:"
     echo ""
     echo "1. Register at https://www.virustotal.com/gui/join-us"
     echo "2. After registering and logging into Virustotal, open https://www.virustotal.com, "\
@@ -33,13 +41,24 @@ then
     echo ""
     echo "From there, copy your API key"
     echo ""
-    echo "[ENTER] to continue..."
-    wait_for_enter 
+    echo "Please paste your Virustotal API key here, then press [ENTER] to continue..."
+    read -t 3600 -p "API KEY: " VT_API_KEY
+    echo "$VT_API_KEY" | secret-tool store --label 'Virustotal API key' virustotal apikey \
+      && echo "Successfully stored API key in secret manager." || echo "Failed to store API key in secret manager"
+    echo ""
+    echo "Press [Enter] to exit"
+    wait_for_enter
 
+    exit 0
 fi
+[[ -f "~/.virustotal-scan-running" ]] && exit 0
+touch ~/.virustotal-scan-running
 
 {
-VT_API_KEY="<YOUR API KEY>"
+if [[ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]]
+then
+  NAUTILUS_SCRIPT_SELECTED_FILE_PATHS="$1"
+fi
 
 setup_guide_html=\
 "PGh0bWw+CiAgICA8aGVhZD4KICAgICAgICA8dGl0bGU+U2V0IHVwIHZpcnVzdG90YWwtc2Nhbi5z
@@ -63,16 +82,30 @@ YSBmaWxlIHdpdGhpbiBOYXV0aWx1cy4gWW91IHdpbGwgZmluZCBpdCBpbiB0aGUgY29udGV4dCBt
 ZW51IHVuZGVyICdTY3JpcHRzJy4KICAgICAgICAgICAgPC9saT4KICAgICAgICA8L29sPgogICAg
 PC9ib2R5Pgo8L2h0bWw+"
 
-VT_API_KEY="$(secret-tool lookup virustotal apikey )"
-
-if [[ $? -ne 0 ]]
+if ! command -v secret-tool > /dev/null 2>&1
 then
-    setup_guide_html_plain="$(echo "$setup_guide_html" | base64 -d)"
-    DATA_URL="data:text/html,${setup_guide_html_plain/\{SCRIPT_PATH\}/$0}"
-    notify-send -a "virustotal-scan.sh" "virustotal-scan has not been set up yet!"
-    $(xdg-open "$DATA_URL" || sensible-browser "$DATA_URL" ) &
-    exit 0
+  notify-send -a "virustotal-scan.sh" "virustotal-scan has not been set up yet!"
+  x-terminal-emulator -e "bash -c '\"$BASH_SOURCE\" --setup'"
+  exit 1
 fi
+
+VT_API_KEY="$(secret-tool lookup virustotal apikey)"
+
+if [[ "$?" != "0" ]]
+then
+  notify-send -a "virustotal-scan" "Failed to retrieve virustotal api key!"
+  echo "ERROR: Failed to load virustotal api key!" 1>&2
+  x-terminal-emulator -e "bash -c '\"$BASH_SOURCE\" --setup'"
+  exit 1
+fi
+
+#if false
+#then
+#    setup_guide_html_plain="$(echo "$setup_guide_html" | base64 -d)"
+#    DATA_URL="data:text/html,${setup_guide_html_plain/\{SCRIPT_PATH\}/$0}"
+#    $(xdg-open "$DATA_URL" || sensible-browser "$DATA_URL" ) &
+#    exit 0
+#fi
 
 while read -r file
 do
@@ -105,5 +138,6 @@ do
 
 done <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
 
-} 2> ~/.virustotal-scan.log | tee ~/.virustotal-scan.log
+} 2>&1 | tee -a "$HOME/.virustotal-scan.log"
 
+rm ~/.virustotal-scan-running
