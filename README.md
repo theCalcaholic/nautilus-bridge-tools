@@ -13,6 +13,18 @@ A handy collection of scripts for Nautilus' file context menu.
 
 ![nautilus-bridge-tools-screenshot](https://github.com/theCalcaholic/nautilus-bridge-tools/releases/download/doc-assets/nautilus-bridge-tools-screenshot.png)
 
+## Installation
+
+The easiest way is by using git:
+
+```sh
+mkdir -p ~/.local/share/nautilus/scripts
+cd ~/.local/share/nautilus/scripts
+git clone git@github.com:theCalcaholic/nautilus-bridge-tools.git bridge-tools
+```
+
+You should find the scripts under Scripts -> bridge-tools if you right-click a file in Nautilus.
+
 ## Scripts
 
 ### open-parent-in-terminal
@@ -27,16 +39,4 @@ This script let's you create a public Nextcloud share from a local file. Quick a
 ### virustotal-scan
 
 I do not use a local antivirus tool on my computer. However, every now and then I need to work with a file that I don't fully trust. That's where Virustotal comes in. It is a web service which allows you to upload and scan a file with a total of 60 popular malware detection tools. Because I'm lazy, I didn't want to open up the web page every time I use the service, so I wrote a nautilus integration script. Shortly after executing it on a file, it will open the virustotal page with its scan results.
-
-## Installation
-
-The easiest way is by using git:
-
-```sh
-mkdir -p ~/.local/share/nautilus/scripts
-cd ~/.local/share/nautilus/scripts
-git clone git@github.com:theCalcaholic/nautilus-bridge-tools.git bridge-tools
-```
-
-You should find the scripts under Scripts -> bridge-tools if you right-click a file in Nautilus.
 
