@@ -44,6 +44,10 @@ dav_url="$nc_url/remote.php/dav/files"
 
 #set -x
 
+urlencode() {
+  python3 -c "import urllib; print urllib.parse.quote('''$1''')"
+}
+
 create_nautilus_shares_directory() {
   curl -X MKCOL -u "$user:$PW" "$dav_url/$user/nautilus-share" 2> /dev/null \
     | grep '<s:message>The resource you tried to create already exists</s:message>' > /dev/null 2>&1
@@ -62,6 +66,7 @@ create_nautilus_shares_directory() {
 }
 
 upload_file() {
+  echo "file to upload: '$1' -> '$2'" >&2
   if curl -X PROPFIND -u "$user:$PW" "$dav_url/$user/nautilus-share/" -H "Depth: 1" 2> /dev/null | grep "$2" > /dev/null 2>&1
   then
     msg="A file named '$2' already exists in $nc_url/index.php/apps/files/?dir=nautilus-share !"
@@ -71,22 +76,26 @@ upload_file() {
   fi
 
   # Upload file
-  curl -T "$1" -u "$user:$PW" "$dav_url/$user/nautilus-share/$2"
+  curl -T "$1" -u "$user:$PW" "$dav_url/$user/nautilus-share/$(urlencode "$2")"
 }
 
 share_file() {
   # Create pulic share
-  local url
-  url="$(curl -H "OCS-APIRequest: true" -u "$user:$PW" -H "Content-Type: application/json" -X POST \
+  local url response
+  response="$(curl -H "OCS-APIRequest: true" -u "$user:$PW" -H "Content-Type: application/json" -X POST \
     --data "{\"path\": \"nautilus-share/$1\", \"shareType\": \"3\", \"publicUpload\": \"false\", \"permissions\": \"1\"}" \
-    "$nc_url/ocs/v2.php/apps/files_sharing/api/v1/shares" 2> /dev/null | grep '<url>')"
-  url="${url##*<url>}"
+    "$nc_url/ocs/v2.php/apps/files_sharing/api/v1/shares")"
+  url="$(echo "$response" | grep '<url>')"
+  url="${response##*<url>}"
   url="${url%%</url>*}"
 
   if [[ -z "$url" ]]
   then
     msg="An error occurred while creating public share for file $file_name!"
     echo "$msg" >&2
+    echo "----------------------" >&2
+    echo "$response" >&2
+    echo "----------------------" >&2
     notify-send -a "share-with-nextcloud" "$msg"
     return 1
   else
@@ -101,10 +110,18 @@ while read -r file
 do
   if [[ -f "$file" ]]
   then
+    echo "Sharing file '$file'..."
     file_name="$(basename "$file")"
 
+    echo "Uploading to 'nautilus-share/$file_name'..."
     upload_file "$file" "$file_name" || exit 1
-    url="$(share_file "$file_name" || exit 2)"
+
+    echo "Retrieving public share..."
+    url="$(share_file "$file_name")"
+    if [[ $? -ne 0 ]]
+    then
+      exit 2
+    fi
     xdg-open "$url"
   fi
 
