@@ -2,6 +2,8 @@
 
 A handy collection of scripts for Nautilus' file context menu.
 
+![nautilus-bridge-tools-screenshot](https://github.com/theCalcaholic/nautilus-bridge-tools/releases/download/doc-assets/nautilus-bridge-tools-screenshot.png)
+
 ## Installation
 
 The easiest way is by using git:
