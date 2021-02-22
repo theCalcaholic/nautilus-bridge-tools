@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 
-nc_url="https://my-nextcloud.example"
-user="eddie"
-PW="123456"
+SETUP_SCRIPT="
+. '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
+SCRIPT_NAME='Share with Nextcloud'
+SCRIPT_FILE_NAME='share-with-nextcloud'
+APT_DEPENDENCIES=('libsecret-tools')
+CONFIG_ITEMS=(
+  'nc_url' 'Please enter your nextcloud url (e.g. https://my-domain.com/nextcloud)'
+  'user'   'Please enter your nextcloud user')
+SECRETS=('Nextcloud Password' 'Please enter a valid Nextcloud user or app password:'
+  'account nextcloud id nextcloud-password')
 
-[[ -f "$HOME/.local/share/nautilus/.share-with-nextcloud.env" ]] \
-  && . "$HOME/.local/share/nautilus/.share-with-nextcloud.env"
+show_setup_dialog
+"
+
+PW="$(secret-tool lookup account nextcloud service nautilus-bridge-tools id nextcloud-password)"
+if [[ -z "$PW" ]] || ! [[ -f "$HOME/.config/nautilus-bridge-tools/.share-with-nextcloud.env" ]]
+then
+  echo "$SETUP_SCRIPT"
+  x-terminal-emulator -e "bash -c \"$SETUP_SCRIPT\""
+  exit 1
+else
+ . "$HOME/.config/nautilus-bridge-tools/.share-with-nextcloud.env"
+fi
+
 dav_url="$nc_url/remote.php/dav/files"
 
 #set -x
