@@ -43,7 +43,7 @@ then
     echo ""
     echo "Please paste your Virustotal API key here, then press [ENTER] to continue..."
     read -t 3600 -p "API KEY: " VT_API_KEY
-    echo "$VT_API_KEY" | secret-tool store --label 'Virustotal API key' virustotal apikey \
+    echo "$VT_API_KEY" | secret-tool store --label 'Virustotal API key' service nautilus-bridge-tools id virustotal-apikey account virustotal.com \
       && echo "Successfully stored API key in secret manager." || echo "Failed to store API key in secret manager"
     echo ""
     echo "Press [Enter] to exit"
@@ -89,7 +89,7 @@ then
   exit 1
 fi
 
-VT_API_KEY="$(secret-tool lookup virustotal apikey)"
+VT_API_KEY="$(secret-tool lookup service nautilus-bridge-tools id virustotal-apikey account virustotal.com)"
 
 if [[ "$?" != "0" ]]
 then
