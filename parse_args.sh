@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 __BASHARGS_DEBUG=
+shopt -s extglob
 
 get_type_if_exists() {
 
@@ -18,7 +19,7 @@ get_type_if_exists() {
 
   if [[ -n "$cut" ]]
   then
-    cut="${cut#* ${2}}"
+    cut="${cut#*( )${2}}"
     [[ -z "$debug" ]] || echo "  1. |${cut}|" >&2
     if [[ "$cut" =~ ^";".* ]]
     then
@@ -128,7 +129,7 @@ set_trap() {
 wait_for_enter() {
     while true
     do
-        read -s -N 1 -t 1 key
+        read -s -N 1 -t 1 key || true
         if [[ "$key" == $'\x0a' ]]
         then
             break;
