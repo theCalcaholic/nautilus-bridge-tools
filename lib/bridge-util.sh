@@ -14,7 +14,7 @@ show_setup_dialog() {
   sudo_required=false
   for pkg in "${APT_DEPENDENCIES[@]}" libsecret-tools
   do
-    echo "$installed_pkgs" | grep "$pkg" > /dev/null 2>&1 || sudo_required=true
+    echo "$installed_pkgs" | grep "\<$pkg[:\>]" > /dev/null 2>&1 || sudo_required=true
   done
   if [[ "$sudo_required" == 'true' ]]
   then
@@ -26,7 +26,7 @@ show_setup_dialog() {
     CHOICE=""
     while [[ "${CHOICE,,}" != "y" ]]
     do
-      read -t 3600 -r -n 1 -p "Continue? [y/N]" CHOICE
+      read -t 3600 -r -n 1 -p "Apply these changes? [y/N]" CHOICE
       if [[ "${CHOICE,,}" == "n" ]]
       then
         echo "Aborting (User choice)..."

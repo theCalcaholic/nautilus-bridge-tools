@@ -17,7 +17,9 @@ show_setup_dialog
 PW="$(secret-tool lookup account nextcloud service nautilus-bridge-tools id nextcloud-password)"
 if [[ -z "$PW" ]] || ! [[ -f "$HOME/.config/nautilus-bridge-tools/.share-with-nextcloud.env" ]]
 then
-  echo "$SETUP_SCRIPT"
+  msg="share-with-nextcloud is not configured. Opening setup dialog..."
+  notify-send -a "share-with-nextcloud" "$msg"
+  echo "NOTICE: $msg" 1>&2
   x-terminal-emulator -e "bash -c \"$SETUP_SCRIPT\""
   exit 1
 else
