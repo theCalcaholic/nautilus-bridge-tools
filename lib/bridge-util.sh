@@ -14,11 +14,12 @@ show_setup_dialog() {
   sudo_required=false
   for pkg in "${APT_DEPENDENCIES[@]}" libsecret-tools
   do
-    echo "$installed_pkgs" | grep "\<$pkg[:\>]" > /dev/null 2>&1 || sudo_required=true
+    echo "$installed_pkgs" | grep "\<$pkg[: ]" > /dev/null 2>&1 || sudo_required=true
+    [[ "$sudo_required" == "false" ]] || break;
   done
   if [[ "$sudo_required" == 'true' ]]
   then
-    echo "This scripts requires some apt packages to be installed, which in turn requires sudo privileges. Please enter your password when asked."
+    echo "This script requires some apt packages to be installed, which in turn requires sudo privileges. Please enter your password when asked."
     echo "Here's what we're going to install:"
     echo ""
     apt-get install -s "${APT_DEPENDENCIES[@]}"
