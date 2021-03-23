@@ -12,7 +12,8 @@ show_setup_dialog() {
   echo ""
   installed_pkgs="$(dpkg -l | grep '^ii')"
   sudo_required=false
-  for pkg in "${APT_DEPENDENCIES[@]}" libsecret-tools
+  APT_DEPENDENCIES+=(libsecret-tools)
+  for pkg in "${APT_DEPENDENCIES[@]}"
   do
     echo "$installed_pkgs" | grep "\<$pkg[: ]" > /dev/null 2>&1 || sudo_required=true
     [[ "$sudo_required" == "false" ]] || break;
