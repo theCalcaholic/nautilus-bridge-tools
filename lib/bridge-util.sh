@@ -70,6 +70,8 @@ show_setup_dialog() {
     read -r -t 3600 -p "${SECRETS[0]}: " VALUE
     echo "$VALUE" | secret-tool store --label "${SECRETS[0]}" service nautilus-bridge-tools ${SECRETS[2]} || {
       echo "Failed to store ${SECRETS[0]} in secret manager!" >&2
+      sleep 3
+      exit 2
     }
     if [[ "${#SECRETS[@]}" -le 3 ]]
     then
