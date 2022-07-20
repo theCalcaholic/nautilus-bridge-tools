@@ -1,6 +1,31 @@
 #!/usr/bin/env bash
 
+open-in-terminal() {
+  local cmd
+  if command -v x-terminal-emulator > /dev/null
+  then
+    cmd=(x-terminal-emulator --working-directory="$(pwd)")
+    [[ -z "$1" ]] || cmd+=(-e "$@")
+  else
+    cmd=(gnome-terminal)
+    [[ -z "$1" ]] || cmd+=(-- "$@")
+  fi
+
+  "${cmd[@]}"
+}
+
+list_installed_packages() {
+  if command -v "dpkg" >/dev/null 
+  then
+    dpkg -l | grep '^ii'
+  elif command -v "dnf" > /dev/null
+  then
+    dnf list --installed
+  fi
+}
+
 show_setup_dialog() {
+  set -e
   HLINE=""
   for i in $(seq ${#SCRIPT_NAME} ) = = _ S e t u p _ _ = =
   do
@@ -10,20 +35,35 @@ show_setup_dialog() {
   echo "== Setup ${SCRIPT_NAME} =="
   echo "$HLINE"
   echo ""
-  installed_pkgs="$(dpkg -l | grep '^ii')"
+  installed_pkgs="$(list_installed_packages || return $?)"
   sudo_required=false
-  APT_DEPENDENCIES+=(libsecret-tools)
-  for pkg in "${APT_DEPENDENCIES[@]}"
+  
+  DEPENDENCIES_APT+=(libsecret-tools)
+  DEPENDENCIES_DNF+=(libsecret)
+  if command -v "apt-get" > /dev/null
+  then
+    deps=("${DEPENDENCIES_APT[@]}")
+    install_cmd=("apt-get" "install")
+    simulate_cmd=("apt-get" "install" "-s")
+  elif command -v "dnf" > /dev/null
+  then
+    deps=("${DEPENDENCIES_DNF[@]}")
+    install_cmd=("dnf" "install" "-y" "--setopt=install_weak_deps=False")
+    simulate_cmd=("dnf" "install" "-y" "--setopt=install_weak_deps=False" "--downloadonly")
+  fi
+
+  for pkg in "${deps[@]}"
   do
     echo "$installed_pkgs" | grep "\<$pkg[: ]" > /dev/null 2>&1 || sudo_required=true
     [[ "$sudo_required" == "false" ]] || break;
   done
+
   if [[ "$sudo_required" == 'true' ]]
   then
-    echo "This script requires some apt packages to be installed, which in turn requires sudo privileges. Please enter your password when asked."
+    echo "This script requires some packages to be installed, which in turn requires sudo privileges. Please enter your password when asked."
     echo "Here's what we're going to install:"
     echo ""
-    apt-get install -s "${APT_DEPENDENCIES[@]}"
+    sudo "${simulate_cmd[@]}" "${deps[@]}"
     echo ""
     CHOICE=""
     while [[ "${CHOICE,,}" != "y" ]]
@@ -37,7 +77,7 @@ show_setup_dialog() {
       fi
     done
     echo ""
-    sudo apt-get install -y "${APT_DEPENDENCIES[@]}"
+    sudo "${install_cmd[@]}" "${deps[@]}"
     echo ""
   fi
 

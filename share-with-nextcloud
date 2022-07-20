@@ -15,10 +15,13 @@ echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
 echo ""
 
 SETUP_SCRIPT="
+{
 . '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
 SCRIPT_NAME='Share with Nextcloud'
 SCRIPT_FILE_NAME='share-with-nextcloud'
-APT_DEPENDENCIES=('curl' 'python3')
+declare -A DEPENDENCIES
+DEPENDENCIES_APIT=('curl' 'python3')
+DEPENDENCIES_DNF=('curl' 'python3')
 CONFIG_ITEMS=(
   'nc_url' 'Please enter your nextcloud url (e.g. https://my-domain.com/nextcloud)'
   'user'   'Please enter your nextcloud user')
@@ -26,6 +29,7 @@ SECRETS=('Nextcloud Password' 'Please enter a valid Nextcloud user or app passwo
   'account nextcloud id nextcloud-password')
 
 show_setup_dialog
+} 2>&1 | tee -a "$(get_log_path share-with-nextcloud)"
 "
 
 PW="$(secret-tool lookup account nextcloud service nautilus-bridge-tools id nextcloud-password)"
@@ -34,7 +38,7 @@ then
   msg="share-with-nextcloud is not configured. Opening setup dialog..."
   notify-send -a "share-with-nextcloud" "$msg"
   echo "NOTICE: $msg" 1>&2
-  x-terminal-emulator -e "bash -c \"$SETUP_SCRIPT\""
+  open-in-terminal bash -c "$SETUP_SCRIPT"
   exit 1
 else
  . "$HOME/.config/nautilus-bridge-tools/.share-with-nextcloud.env"
@@ -45,7 +49,7 @@ dav_url="$nc_url/remote.php/dav/files"
 #set -x
 
 urlencode() {
-  python3 -c "import urllib; print urllib.parse.quote('''$1''')"
+  python3 -c "import urllib; print(urllib.parse.quote('''$1'''))"
 }
 
 create_nautilus_shares_directory() {

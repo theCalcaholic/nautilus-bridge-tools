@@ -18,7 +18,8 @@ SETUP_SCRIPT="
 . '$(realpath "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh")';
 SCRIPT_NAME='Virustotal Scan'
 SCRIPT_FILE_NAME='virustotal-scan'
-APT_DEPENDENCIES=('jq')
+DEPENDENCIES_APT=('jq')
+DEPENDENCIES_DNF=('jq')
 CONFIG_ITEMS=()
 SECRETS=(
 'Virustotal API key' 
@@ -41,7 +42,7 @@ then
   msg="Could not load virustotal api key. Opening setup dialog..."
   notify-send -a "virustotal-scan" "$msg"
   echo "NOTICE: $msg" 1>&2
-  x-terminal-emulator -e "bash -c \"$SETUP_SCRIPT\""
+  open-in-terminal bash -c "$SETUP_SCRIPT"
   exit 1
 fi
 

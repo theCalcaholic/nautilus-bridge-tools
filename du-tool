@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+. "$(dirname "$BASH_SOURCE")/lib/bridge-util.sh"
+
+{
+
+
+  echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+  paths=()
+  while read -r file
+  do
+    [[ -n "$file" ]] || continue
+    paths+=("$file")
+    if [[ -d "$file" ]]
+    then
+      globs=("$file"/*)
+      printf " %q" "${globs[@]}"
+      [[ -e "${globs[0]}" ]] && paths+=("${globs[@]}")
+    fi
+  done <<<"$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+  printf " %q" "${paths[@]}"
+
+  DU_SCRIPT="
+set +e
+paths=($(printf " %q" "${paths[@]}"))
+du -ahd 1 \"\${paths[@]}\" | pv -clN du-tool -s \"${#paths[@]}\" -F \"%N: %t %p [%b/${#paths[@]}]\" | sort -h
+sleep 3600
+"
+
+open-in-terminal bash -c "$DU_SCRIPT" &
+
+} 2>&1 | tee -a "$(get_log_path du-tool)"
+
